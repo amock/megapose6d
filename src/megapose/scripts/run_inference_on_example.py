@@ -1,3 +1,20 @@
+import shutil
+
+driver = None
+
+gecko_path = shutil.which("geckodriver")
+if gecko_path:
+    # 'gecko_path' should point to something like "~/miniforge3/envs/megapose/bin/geckodriver"
+    # on my Ubuntu 24 system it was also possible to hardcode this to "/snap/bin/firefox.geckodriver"
+    from selenium import webdriver
+    from selenium.webdriver.firefox.options import Options
+    from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
+    from selenium.webdriver.firefox.service import Service
+
+    options = Options() # add options if required
+    service = Service(gecko_path)
+    driver = webdriver.Firefox(options=options, service=service)
+
 # Standard Library
 import argparse
 import json
@@ -101,7 +118,7 @@ def make_detections_visualization(
     fig_det = plotter.plot_detections(fig_rgb, detections=detections)
     output_fn = example_dir / "visualizations" / "detections.png"
     output_fn.parent.mkdir(exist_ok=True)
-    export_png(fig_det, filename=output_fn)
+    export_png(fig_det, filename=output_fn, webdriver=driver)
     logger.info(f"Wrote detections visualization: {output_fn}")
     return
 
@@ -187,9 +204,9 @@ def make_output_visualization(
     fig_all = gridplot([[fig_rgb, fig_contour_overlay, fig_mesh_overlay]], toolbar_location=None)
     vis_dir = example_dir / "visualizations"
     vis_dir.mkdir(exist_ok=True)
-    export_png(fig_mesh_overlay, filename=vis_dir / "mesh_overlay.png")
-    export_png(fig_contour_overlay, filename=vis_dir / "contour_overlay.png")
-    export_png(fig_all, filename=vis_dir / "all_results.png")
+    export_png(fig_mesh_overlay, filename=vis_dir / "mesh_overlay.png", webdriver=driver)
+    export_png(fig_contour_overlay, filename=vis_dir / "contour_overlay.png", webdriver=driver)
+    export_png(fig_all, filename=vis_dir / "all_results.png", webdriver=driver)
     logger.info(f"Wrote visualizations to {vis_dir}.")
     return
 
