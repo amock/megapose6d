@@ -4,7 +4,7 @@ gecko_path = shutil.which("geckodriver")
 
 driver = None # singleton
 def get_driver():
-    global driver
+    global driver, gecko_path
     if driver is None and gecko_path:
         # 'gecko_path' should point to something like "~/miniforge3/envs/megapose/bin/geckodriver"
         # on my Ubuntu 24 system it was also possible to hardcode this to "/snap/bin/firefox.geckodriver"
